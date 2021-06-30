@@ -47,8 +47,8 @@ chop()
  
  #获取字符串中字符的个数
  #wc会在输出添加一些空格，所以我们用sed把他们过滤掉
- numofchar=$(echo -n "$1" | wc -c | sed 's/ //g/')
- if [ "numofchar" = "1"]; then
+ numofchar=$(echo -n "$1" | wc -c | sed 's/ //g')
+ if [ "$numofchar" = "1" ]; then
  #在字符串中只有一个字符
   rval=""
   return
@@ -79,10 +79,15 @@ weight=1
 [ -z "$1" ] && help
 
 #从命令行参数中获取二进制数的字符串
+binnum="$1"
+binnumorig="$1"
+
+while [ -n "$binnum" ];do
+ #二进制字符串不能为空，获取字符串中的最后一位字符
  lastchar "$binnum"
  if [ "$rval" = "1" ]; then
  #最后一位字符为1,总和增1
-  sum = $(expr "$weight" + "$sum")
+  sum=$(expr "$weight" + "$sum")
  fi
  
  #移除字符串的最后一位付给循环判断变量
@@ -91,8 +96,7 @@ weight=1
  echo $binnum
  
  #权重翻倍
- weight = $(expr "$weight" "*" 2)
- echo $weight
+ weight=$(expr "$weight" "*" 2)
 done
 
 #显示用户名及其转换结果
