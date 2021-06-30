@@ -1,0 +1,100 @@
+#!/bin/sh
+help()
+{
+ #用一对help之间的字符串表示命令帮助信息并显示，然后退出命令
+ cat<< HELP
+ b2d - convert binary to decimal
+ USAGE:bad [-h] binarynum
+ OPTIONS: -h help text
+ EXAMPLE: b2d 111010
+ will return 58
+HELP
+ exit 0
+}
+
+error()
+{
+ #打印错误并退出
+ echo "$1"
+ exit 1
+}
+
+lastchar()
+{
+ #返回在字符串中的最后一个字符
+ if [ -z "$1" ]; then
+ # 是空字符串,返回值为空
+   rval=""
+   return
+ fi
+
+ #获取字符串中字符的个数
+ #wc会在输出添加一些空格，所以我们用sed把它们过滤掉
+ numofchar=$(echo -n "$1" | wc -c | sed 's/ //g')
+
+ #获取最后一个字符
+ rval=$(echo -n "$1" | cut -b "$numofchar")
+}
+
+chop()
+{
+ #移去字符串中的最后一个字符，然后返回剩下的字符串
+ if [ -z "$1" ]; then
+ #是空字符串,返回值为空
+  rval=""
+  return
+ fi
+ 
+ #获取字符串中字符的个数
+ #wc会在输出添加一些空格，所以我们用sed把他们过滤掉
+ numofchar=$(echo -n "$1" | wc -c | sed 's/ //g/')
+ if [ "numofchar" = "1"]; then
+ #在字符串中只有一个字符
+  rval=""
+  return
+ fi
+
+ numofcharminus1=$(expr "$numofchar" - 1)
+ 
+ #获取移除最后一个字符后的字符串
+ rval=$(echo -n "$1" | cut -b 1-${numofcharminus1})
+}
+
+while [ -n "$1" ]; do
+#命令行参数不为空
+ case $1 in
+  -h) help; shift1;; #调用帮助函数
+  --) shift; break;; #结束选项
+  -*) error "error: no such option $1. -h for help";; #错误提示
+  *) break;; #退出判断
+ esac
+done
+
+
+#主程序开始，初始化综合权重变量
+sum=0
+weight=1
+
+#至少要给出一个命令行参数
+[ -z "$1" ] && help
+
+#从命令行参数中获取二进制数的字符串
+ lastchar "$binnum"
+ if [ "$rval" = "1" ]; then
+ #最后一位字符为1,总和增1
+  sum = $(expr "$weight" + "$sum")
+ fi
+ 
+ #移除字符串的最后一位付给循环判断变量
+ chop $binnum
+ binnum=$rval
+ echo $binnum
+ 
+ #权重翻倍
+ weight = $(expr "$weight" "*" 2)
+ echo $weight
+done
+
+#显示用户名及其转换结果
+echo -e "Hello, $USER. \n\nBinary $binnumorig is decimal $sum" 
+  
