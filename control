@@ -1,0 +1,16 @@
+#!/bin/sh
+
+control_c()
+#如果用户键入Ctrl+c就执行
+{
+ echo -en "\n***我要走了！***\n"
+ #rm -f /tmp/tempfile
+ echo $?
+ exit $?
+}
+
+# 设置Ctrl+c键盘中断
+trap control_c SIGINT
+
+#main 循环
+while true; do read x; done

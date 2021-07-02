@@ -1,0 +1,11 @@
+#!/bin/bash
+#在每个命令行显示变量$variable的值
+trap 'echo "VARIABLE-TRACE> \$variable = \"$variable\""' DEBUG
+
+variable=29
+echo "Just initialized \"\$variable\" to $variable."
+let "variable *= 3"
+echo "Just multiplied \"\$variable\" by 3."
+
+# $? 指的是前一个命令的返回码
+exit $?
